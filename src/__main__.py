@@ -3,6 +3,8 @@ from contextlib import suppress
 import pygame
 
 from src.util import Colors
+from src.square import Square
+from src.vector import Vector
 
 WIDTH, HEIGHT = 1200, 900
 TICK_RATE = 100
@@ -25,6 +27,13 @@ class Game:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 self.running = False
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    new_squares = []
+                    for square in self.squares:
+                        new_squares += square.split()
+                    self.squares = new_squares
+                    print(len(self.squares))
 
     def redraw_screen(self) -> None:
         """
@@ -34,7 +43,8 @@ class Game:
         """
         self.screen.fill(Colors.GREY)
 
-        # TODO: Main drawing
+        for square in self.squares:
+            pygame.draw.rect(self.screen, Colors.WHITE, square.rect)
 
     def update_screen(self, tick: bool = True) -> None:
         """
@@ -53,6 +63,13 @@ class Game:
             self.fps_clock.tick(self.tick_rate)
 
     def main(self) -> None:
+        self.squares = []
+        self.squares.append(
+            Square(
+                Vector(self.width / 2, self.height / 2),
+                max(WIDTH, HEIGHT) / 2
+            )
+        )
         # Main game loop
         while self.running:
             self.update_screen()
